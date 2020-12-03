@@ -129,6 +129,42 @@ WHERE rule_check = TRUE
 ;
 
 
+--Second Puzzle of Day 2
+--finding characters in specific positions of the password
+
+WITH t1 AS (
+ 	SELECT
+		SPLIT_PART(t, ' ' , 1) as range,
+		SPLIT_PART(t, ' ' , 2) as letter,
+		SPLIT_PART(t, ' ' , 3) as pass
+	FROM text_pass 
+	),
+	t2 AS (
+		SELECT 
+			SPLIT_PART(t1.range, '-' , 1)::INTEGER AS min_pos,
+			SPLIT_PART(t1.range, '-' , 2)::INTEGER AS max_pos,
+			REPLACE(t1.letter, ':' , '') AS letter,
+			t1.pass AS pass
+		FROM t1	
+	),
+	t3 AS (
+		SELECT 
+			t2.pass,
+			t2.min_pos,
+			t2.max_pos,
+			t2.letter,
+			substr(t2.pass::TEXT, t2.min_pos::INTEGER, 1) AS letter_in_min_position,
+			substr(t2.pass::TEXT, t2.max_pos::INTEGER, 1) AS letter_in_max_position
+		FROM t2
+	)
+	
+		SELECT 
+			COUNT(*)
+		FROM t3
+		WHERE (t3.letter_in_max_position = t3.letter AND t3.letter_in_min_position != t3.letter_in_max_position)
+		OR (t3.letter_in_min_position = t3.letter AND t3.letter_in_min_position  != t3.letter_in_max_position)
+;
+611
 
 --
 --UPDATE 
